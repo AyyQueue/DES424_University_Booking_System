@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>University Room Booking System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <i class="fas fa-door-open"></i>
+                <span>SIITRoomBook</span>
+            </div>
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <i class="fas fa-bars"></i>
+            </button>
+            <nav id="mainNav">
+                <ul>
+                    <li><a href="./index.html" class="active">Home</a></li>
+                    <li><a href="#rooms">Rooms</a></li>
+                    <li><a href="#" class="btn">Book Now</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>University Room Booking Made Simple</h1>
+            <p>Easily reserve lecture halls, study rooms, and meeting spaces across campus with our intuitive booking
+                system.</p>
+            <a href="#rooms" class="btn btn-large">Explore Available Rooms</a>
+        </div>
+    </section>
+
+    <!-- Rooms Section -->
+    <section id="rooms">
+        <div class="container">
+            <h2 class="section-title">Available Rooms</h2>
+            <div class="rooms-grid">
+                <!-- Room 1 -->
+                <div class="room-card">
+                    <div class="room-image" style="background-image: url('./img/room1.jpg')"></div>
+                    <div class="room-info">
+                        <h3>Main Lecture Hall A</h3>
+                        <div class="room-capacity">
+                            <i class="fas fa-users"></i>
+                            <span>Capacity: 150 people</span>
+                        </div>
+                        <div class="room-features">
+                            <span class="room-feature">Projector</span>
+                            <span class="room-feature">Audio System</span>
+                            <span class="room-feature">Wheelchair Access</span>
+                        </div>
+                        <span class="room-status available">Available</span>
+                        <button class="btn book-btn" style="width: 100%; margin-top: 1rem;"
+                            data-room="Main Lecture Hall A">Book Now</button>
+                    </div>
+                </div>
+
+                <!-- Room 2 -->
+                <div class="room-card">
+                    <div class="room-image"
+                        style="background-image: url('https://images.unsplash.com/photo-1562774053-701939374585?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80')">
+                    </div>
+                    <div class="room-info">
+                        <h3>Science Building Room 101</h3>
+                        <div class="room-capacity">
+                            <i class="fas fa-users"></i>
+                            <span>Capacity: 50 people</span>
+                        </div>
+                        <div class="room-features">
+                            <span class="room-feature">Lab Equipment</span>
+                            <span class="room-feature">Projector</span>
+                            <span class="room-feature">Whiteboard</span>
+                        </div>
+                        <span class="room-status available">Available</span>
+                        <button class="btn book-btn" style="width: 100%; margin-top: 1rem;"
+                            data-room="Science Building Room 101">Book Now</button>
+                    </div>
+                </div>
+
+                <!-- Room 3 -->
+                <div class="room-card">
+                    <div class="room-image"
+                        style="background-image: url('https://images.unsplash.com/photo-1568667256549-094345857637?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80')">
+                    </div>
+                    <div class="room-info">
+                        <h3>Library Study Room 1</h3>
+                        <div class="room-capacity">
+                            <i class="fas fa-users"></i>
+                            <span>Capacity: 8 people</span>
+                        </div>
+                        <div class="room-features">
+                            <span class="room-feature">Quiet Zone</span>
+                            <span class="room-feature">Whiteboard</span>
+                            <span class="room-feature">Power Outlets</span>
+                        </div>
+                        <span class="room-status booked">Booked Until 3 PM</span>
+                        <button class="btn" style="width: 100%; margin-top: 1rem;" disabled>Currently Booked</button>
+                    </div>
+                </div>
+
+                <!-- Room 4 -->
+                <div class="room-card">
+                    <div class="room-image"
+                        style="background-image: url('https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80')">
+                    </div>
+                    <div class="room-info">
+                        <h3>Conference Room B</h3>
+                        <div class="room-capacity">
+                            <i class="fas fa-users"></i>
+                            <span>Capacity: 20 people</span>
+                        </div>
+                        <div class="room-features">
+                            <span class="room-feature">Video Conferencing</span>
+                            <span class="room-feature">Projector</span>
+                            <span class="room-feature">Catering Available</span>
+                        </div>
+                        <span class="room-status available">Available</span>
+                        <button class="btn book-btn" style="width: 100%; margin-top: 1rem;"
+                            data-room="Conference Room B">Book Now</button>
+                    </div>
+                </div>
+
+                <!-- Room 5 -->
+                <div class="room-card">
+                    <div class="room-image"
+                        style="background-image: url('https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80')">
+                    </div>
+                    <div class="room-info">
+                        <h3>Arts Building Studio</h3>
+                        <div class="room-capacity">
+                            <i class="fas fa-users"></i>
+                            <span>Capacity: 30 people</span>
+                        </div>
+                        <div class="room-features">
+                            <span class="room-feature">Natural Light</span>
+                            <span class="room-feature">Art Supplies</span>
+                            <span class="room-feature">Flexible Seating</span>
+                        </div>
+                        <span class="room-status available">Available</span>
+                        <button class="btn book-btn" style="width: 100%; margin-top: 1rem;"
+                            data-room="Arts Building Studio">Book Now</button>
+                    </div>
+                </div>
+
+                <!-- Room 6 -->
+                <div class="room-card">
+                    <div class="room-image"
+                        style="background-image: url('https://images.unsplash.com/photo-1547658719-da2b51169166?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80')">
+                    </div>
+                    <div class="room-info">
+                        <h3>Computer Lab 3</h3>
+                        <div class="room-capacity">
+                            <i class="fas fa-users"></i>
+                            <span>Capacity: 40 people</span>
+                        </div>
+                        <div class="room-features">
+                            <span class="room-feature">30 Computers</span>
+                            <span class="room-feature">Projector</span>
+                            <span class="room-feature">Software Suite</span>
+                        </div>
+                        <span class="room-status booked">Booked</span>
+                        <button class="btn" style="width: 100%; margin-top: 1rem;" disabled>Currently Booked</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-column">
+                <h3>UniRoomBook</h3>
+                <p>The easiest way to book rooms across campus. Designed for students, faculty, and staff.</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+            <div class="footer-column">
+                <h3>Quick Links</h3>
+                <ul class="footer-links">
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#rooms">Available Rooms</a></li>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#">My Bookings</a></li>
+                    <li><a href="#">Help & Support</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Contact Us</h3>
+                <ul class="footer-links">
+                    <li><i class="fas fa-map-marker-alt"></i> Thamasat University, ragsit campus</li>
+                    <li><i class="fas fa-phone"></i> 123-456-7890</li>
+                    <li><i class="fas fa-envelope"></i> Cloudbase@gmail.com</li>
+                    <li><i class="fas fa-clock"></i> Mon-Fri: 8AM-6PM</li>
+                </ul>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>&copy; Cloud base Project: University Room Booking System</p>
+        </div>
+    </footer>
+
+    <div class="modal" id="successModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Booking Confirmed</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Your room booking has been successfully confirmed!</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-success" id="modalOk">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

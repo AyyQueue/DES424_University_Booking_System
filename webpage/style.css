@@ -67,6 +67,10 @@ nav ul {
     gap: 1.5rem;
 }
 
+li {
+        align-content: center;
+}
+
 nav a {
     color: white;
     text-decoration: none;
@@ -417,14 +421,15 @@ footer {
         gap: 0;
     }
 
-    nav li {
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    nav li {      
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1); 
     }
 
     nav a {
         display: block;
         padding: 1rem;
-    }
+        width: 100%;
+    }  
 
     .hero h1 {
         font-size: 1.8rem;

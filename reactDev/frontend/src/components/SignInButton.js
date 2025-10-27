@@ -1,7 +1,6 @@
-import React, { useState } from "react";
+import React from "react";
 
-export default function SignInButton() {
-  const [user, setUser] = useState(null);
+export default function SignInButton({user, setUser}) {
 
   const handleLogin = async () => {
     const response = await fetch("http://127.0.0.1:5000/login", { method: "POST" });
@@ -12,7 +11,7 @@ export default function SignInButton() {
   const handleLogout = () => setUser(null);
 
   return (
-    <button onClick={user ? handleLogout : handleLogin}>
+    <button className="btn" onClick={user ? handleLogout : handleLogin}>
       {user ? `${user} - Sign Out` : "Sign In"}
     </button>
   );

@@ -18,7 +18,7 @@
 body {
     background-color: #f5f7fa;
     color: var(--dark);
-    line-height: 1.6;
+    
 }
 
 /* Header Styles */
@@ -78,6 +78,18 @@ nav a {
     transition: color 0.3s;
     padding: 0.5rem;
     border-radius: 4px;
+    font-size: medium;
+}
+
+nav button {
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s;
+    padding: 0.5rem;
+    border-radius: 4px;
+    text-align: left;
+    font-size: medium;
 }
 
 /*Freezes, may fix later
@@ -127,10 +139,12 @@ nav a {
     box-shadow: var(--shadow);
 }
 
+
 .btn:hover {
     background-color: #4c005d;
-    transform: translateY(-2px);
-}
+    /*transform: translateY(-2px)*/
+} 
+
 
 .btn-large {
     padding: 1rem 2rem;
@@ -402,12 +416,12 @@ footer {
 
     nav {
         position: fixed;
-        top: 70px;
+        top: 64px;
         left: 0;
         width: 100%;
         background-color: var(--primary);
         transform: translateY(-150%);
-        transition: transform 0.3s;
+        /*transition: transform 0.3s;*/ /*Disabled for now, since transition happens infront of nav*/
         box-shadow: var(--shadow);
     }
 
@@ -430,6 +444,12 @@ footer {
         padding: 1rem;
         width: 100%;
     }  
+
+    nav button {
+        width: 100%;
+        padding: 1rem;
+        display: block;
+    }
 
     .hero h1 {
         font-size: 1.8rem;

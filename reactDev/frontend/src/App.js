@@ -1,9 +1,10 @@
-
+import { useState } from "react";
 import SignInButton from "./components/SignInButton.js";
+import SignUpButton from "./components/SignUpButton.js";
 import useOldScript from "./script.js";
 
 function App() {
-
+  const [user, setUser] = useState(null);
   useOldScript();
 
   return (
@@ -22,9 +23,8 @@ function App() {
             <ul>
               <li><a href="./index.html" className="active">Home</a></li>
               <li><a href="#rooms">Rooms</a></li>
-              <li><a href="#" className="btn">Sign in</a></li> {/* Should be visible when signed out-->*/}
-              <li><a href="#" className="btn">Sign Up</a></li> {/* Should be visible when signed out-->*/}
-              <li><a href="#" className="btn">'username' - Sign Out</a></li> {/* Should be visible when signed in */}
+              <li><SignUpButton user={user} setUser={setUser}/></li> {/* Should be visible when signed out-->*/}
+              <li><SignInButton user={user} setUser={setUser}/></li> {/* Should be visible when signed in */}
             </ul>
           </nav>
         </div>

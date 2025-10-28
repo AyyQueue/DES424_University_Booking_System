@@ -2,9 +2,11 @@ import { useState } from "react";
 import SignInButton from "./components/SignInButton.js";
 import SignUpButton from "./components/SignUpButton.js";
 import useOldScript from "./script.js";
+import SignInModal from "./components/SignInModal.js";
 
 function App() {
   const [user, setUser] = useState(null);
+  const [signInModalActive, setSignInModalActive] = useState(false);
   useOldScript();
 
   return (
@@ -24,7 +26,7 @@ function App() {
               <li><a href="./index.html" className="active">Home</a></li>
               <li><a href="#rooms">Rooms</a></li>
               <li><SignUpButton user={user} setUser={setUser}/></li> {/* Should be visible when signed out-->*/}
-              <li><SignInButton user={user} setUser={setUser}/></li> {/* Should be visible when signed in */}
+              <li><SignInButton user={user} setUser={setUser} setSignInModalActive={setSignInModalActive}/></li> {/* Should be visible when signed in */}
             </ul>
           </nav>
         </div>
@@ -228,6 +230,8 @@ function App() {
           </div>
         </div>
       </div>
+
+      <SignInModal user={user} setUser={setUser} setSignInModalActive={setSignInModalActive} signInModalActive={signInModalActive}/>
 
       <script src="script.js"></script>
     </div>

@@ -1,17 +1,13 @@
 import React from "react";
 
-export default function SignInButton({user, setUser}) {
+export default function SignInButton({ user, setUser, setSignInModalActive }) {
 
-  const handleLogin = async () => {
-    const response = await fetch("http://127.0.0.1:5000/login", { method: "POST" });
-    const data = await response.json();
-    setUser(data.username);
-  };
+  const openLoginPage = () => {setSignInModalActive(true);};
 
-  const handleLogout = () => setUser(null);
+  const logOut = () => setUser(null);
 
   return (
-    <button className="btn" onClick={user ? handleLogout : handleLogin}>
+    <button className="btn" onClick={user ? logOut : openLoginPage}>
       {user ? `${user} - Sign Out` : "Sign In"}
     </button>
   );

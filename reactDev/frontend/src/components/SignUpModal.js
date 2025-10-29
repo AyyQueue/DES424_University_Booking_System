@@ -5,6 +5,7 @@ export default function SignUpModal({signUpModalActive, setSignUpModalActive }) 
     const [registerMSG, setRegisterMSG] = useState("");
     const [registerError, setRegisterError] = useState(false);
     const [loading, setLoading] = useState(false);
+    const serverUrl = process.env.REACT_APP_BACKENDSERVER_URL;
 
     // Global cursor effect
     useEffect(() => {
@@ -39,7 +40,7 @@ export default function SignUpModal({signUpModalActive, setSignUpModalActive }) 
         const password = formData.get("password");
 
         try {
-            const response = await fetch("http://127.0.0.1:5000/register", {
+            const response = await fetch(`${serverUrl}/register`, {
                 method: "POST",
                 headers: {"Content-Type": "application/json", },
                 body: JSON.stringify({ username, password }),

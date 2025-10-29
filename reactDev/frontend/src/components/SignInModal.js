@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 
 export default function SignInModal({ user, setUser, signInModalActive, setSignInModalActive }) {
 
+    const serverUrl = process.env.REACT_APP_BACKENDSERVER_URL;
     const [loginErrorMSG, setloginErrorMSG] = useState("");
     const [loading, setLoading] = useState(false);
 
@@ -37,7 +38,7 @@ export default function SignInModal({ user, setUser, signInModalActive, setSignI
         const password = formData.get("password");
 
         try {
-            const response = await fetch("http://127.0.0.1:5000/login", {
+            const response = await fetch(`${serverUrl}/login`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json", // tell server we're sending JSON

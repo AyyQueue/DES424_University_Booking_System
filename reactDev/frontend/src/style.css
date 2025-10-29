@@ -12,13 +12,14 @@
     --light: #ecf0f1;
     --dark: #2c3e50;
     --success: #2ecc71;
+    --error: #ff0000;
     --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 body {
     background-color: #f5f7fa;
     color: var(--dark);
-    line-height: 1.6;
+    
 }
 
 /* Header Styles */
@@ -78,6 +79,18 @@ nav a {
     transition: color 0.3s;
     padding: 0.5rem;
     border-radius: 4px;
+    font-size: medium;
+}
+
+nav button {
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s;
+    padding: 0.5rem;
+    border-radius: 4px;
+    text-align: left;
+    font-size: medium;
 }
 
 /*Freezes, may fix later
@@ -127,10 +140,12 @@ nav a {
     box-shadow: var(--shadow);
 }
 
+
 .btn:hover {
     background-color: #4c005d;
-    transform: translateY(-2px);
-}
+    /*transform: translateY(-2px)*/
+} 
+
 
 .btn-large {
     padding: 1rem 2rem;
@@ -249,6 +264,8 @@ section {
     color: #721c24;
 }
 
+/*Login Modal*/
+
 /* Modal Styles */
 .modal {
     position: fixed;
@@ -319,8 +336,19 @@ section {
 
 .modal-footer {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
+    align-content: center;
     gap: 1rem;
+}
+
+p.errorText{
+    color:var(--error);
+    align-self: center;
+}
+
+p.succesText{
+    color:var(--success);
+    align-self: center;
 }
 
 /* Footer */
@@ -340,7 +368,7 @@ footer {
 
 .footer-column h3 {
     margin-bottom: 1.5rem;
-    color: var(#ddd);
+    color: #ddd;
 }
 
 .footer-links {
@@ -381,7 +409,7 @@ footer {
 }
 
 .social-links a:hover {
-    background-color: var(#95008d);
+    background-color: #95008d;
     transform: translateY(-3px);
 }
 
@@ -402,12 +430,12 @@ footer {
 
     nav {
         position: fixed;
-        top: 70px;
+        top: 64px;
         left: 0;
         width: 100%;
         background-color: var(--primary);
         transform: translateY(-150%);
-        transition: transform 0.3s;
+        /*transition: transform 0.3s;*/ /*Disabled for now, since transition happens infront of nav*/
         box-shadow: var(--shadow);
     }
 
@@ -430,6 +458,12 @@ footer {
         padding: 1rem;
         width: 100%;
     }  
+
+    nav button {
+        width: 100%;
+        padding: 1rem;
+        display: block;
+    }
 
     .hero h1 {
         font-size: 1.8rem;

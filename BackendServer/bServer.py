@@ -5,7 +5,7 @@ import mysql.connector
 from mysql.connector import pooling, Error
 import bcrypt
 import secrets
-
+import os
 
 # Create a connection pool at startup
 dbconfig = {
@@ -33,9 +33,11 @@ app = Flask(__name__)
 # allows React frontend on different port to fetch registerData
 CORS(app)  
 
-USERNAME = "Mads"
-PASSWORD = "123"
 allowed = re.compile(r'^[a-zA-Z0-9!@#$%^&*()_\-+=]+$')
+
+@app.route("/hello", methods=["GET"])
+def hello():
+    return "Hello from BackendServer!"
 
 #run login() when POST request is made to /login
 @app.route("/login", methods=["POST"])
@@ -131,25 +133,52 @@ def register():
         if conn: conn.close()
 
 @app.route("/rooms", methods=["POST"])
-def getAvailableRooms():
+def get_rooms():
+    requestData = request.get_json()
+    sessionKey = requestData.get("sessionKey")
 
-    userData = request.get_json()  # Parse JSON body
-
+    conn = connection_pool.get_connection()
+    cursor = conn.cursor(dictionary=True)
     try:
-        # Get a connection from the pool
-        conn = connection_pool.get_connection()
-        cursor = conn.cursor(dictionary=True)
+        # Check user session and get authority
+        cursor.execute("SELECT idUsers, username, authorityLevel FROM Users WHERE sessionKey = %s", (sessionKey,))
+        user = cursor.fetchone()
+        if not user:
+            return jsonify({"error": "Invalid sessionKey"}), 401
 
-        cursor.execute("SELECT * FROM Rooms") #Select all rooms for now
+        user_authority = user["authorityLevel"]
+
+        # Fetch rooms user has access to
+        cursor.execute("""
+            SELECT idRooms, name, capicity, imageURL
+            FROM Rooms
+            WHERE accesLevel <= %s
+        """, (user_authority,))
         rooms = cursor.fetchall()
 
-        cursor.close()
-        conn.close()  # returns connection to the pool
+        # Attach features to each room
+        for room in rooms:
+            cursor.execute("""
+                SELECT f.name
+                FROM RoomFeatures rf
+                JOIN Features f ON rf.featureId = f.idFeatures
+                WHERE rf.roomId = %s
+            """, (room['idRooms'],))
+            features = [f['name'] for f in cursor.fetchall()]
+            room['features'] = features
+            room['image'] = room.pop('imageURL')  # rename to match frontend
+            room['capacity'] = room.pop('capicity')  # rename to match frontend
 
         return jsonify(rooms)
 
-    except mysql.connector.Error as err:
-        return jsonify({"error": str(err)}), 500
+    except Error as e:
+        print("❌ Database error:", e)
+        return jsonify({"error": "Database error"}), 500
+
+    finally:
+        cursor.close()
+        conn.close()
+
 
 
 
@@ -159,3 +188,5 @@ def getAvailableRooms():
 # Run the server (only if this file is executed directly)
 if __name__ == "__main__":
     app.run(debug=True)
+    #port = int(os.environ.get("PORT", 8080))
+    #app.run(host="0.0.0.0", port=port)

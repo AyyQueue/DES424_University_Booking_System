@@ -10,10 +10,6 @@ SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,N
 -- -----------------------------------------------------
 -- Schema RoomBookingDB
 -- -----------------------------------------------------
-
--- -----------------------------------------------------
--- Schema RoomBookingDB
--- -----------------------------------------------------
 CREATE SCHEMA IF NOT EXISTS `RoomBookingDB` DEFAULT CHARACTER SET utf8 ;
 USE `RoomBookingDB` ;
 
@@ -31,8 +27,7 @@ CREATE TABLE IF NOT EXISTS `RoomBookingDB`.`Rooms` (
   `capicity` INT UNSIGNED NOT NULL,
   `imageURL` VARCHAR(255) NULL,
   PRIMARY KEY (`idRooms`)
-  ) ENGINE = InnoDB;
-
+) ENGINE = InnoDB;
 
 -- -----------------------------------------------------
 -- Table `RoomBookingDB`.`Users`
@@ -48,9 +43,7 @@ CREATE TABLE IF NOT EXISTS `RoomBookingDB`.`Users` (
   PRIMARY KEY (`idUsers`),
   UNIQUE INDEX `username_UNIQUE` (`username` ASC) VISIBLE,
   UNIQUE INDEX `email_UNIQUE` (`email` ASC) VISIBLE
-)
-ENGINE = InnoDB;
-
+) ENGINE = InnoDB;
 
 -- -----------------------------------------------------
 -- Table `RoomBookingDB`.`Bookings`
@@ -75,19 +68,49 @@ CREATE TABLE IF NOT EXISTS `RoomBookingDB`.`Bookings` (
     FOREIGN KEY (`roomId`)
     REFERENCES `RoomBookingDB`.`Rooms` (`idRooms`)
     ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+    ON UPDATE NO ACTION
+) ENGINE = InnoDB;
 
+-- -----------------------------------------------------
+-- Table `RoomBookingDB`.`Features`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `RoomBookingDB`.`Features` (
+  `idFeatures` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(25) NOT NULL,
+  PRIMARY KEY (`idFeatures`),
+  UNIQUE INDEX `name_UNIQUE` (`name` ASC) VISIBLE
+) ENGINE = InnoDB;
+
+-- -----------------------------------------------------
+-- Table `RoomBookingDB`.`RoomFeatures`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `RoomBookingDB`.`RoomFeatures` (
+  `idRoomFeatures` INT NOT NULL AUTO_INCREMENT,
+  `roomId` INT NOT NULL,
+  `featureId` INT NOT NULL,
+  PRIMARY KEY (`idRoomFeatures`),
+  INDEX `roomId_idx` (`roomId` ASC) VISIBLE,
+  INDEX `featureId_idx` (`featureId` ASC) VISIBLE,
+  CONSTRAINT `fk_room`
+    FOREIGN KEY (`roomId`)
+    REFERENCES `RoomBookingDB`.`Rooms` (`idRooms`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_feature`
+    FOREIGN KEY (`featureId`)
+    REFERENCES `RoomBookingDB`.`Features` (`idFeatures`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+) ENGINE = InnoDB;
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 
-
 -- Default Rooms
 INSERT INTO `RoomBookingDB`.`Rooms` (`name`, `buildingCode`, `roomNumber`, `roomSection`, `description`, `accesLevel`, `capicity`, `imageURL`)
 VALUES
-  ('Main Lecture Hall', 'MLH', 1, 'A', 'Big lecture hall for many people', 30, 90,''),
+  ('Main Lecture Hall', 'MLH', 1, 'A', 'Big lecture hall for many people', 30, 90,'https://images.pexels.com/photos/269140/pexels-photo-269140.jpeg'),
   ('Science Building Lab', 'SC', 101, NULL,'Science Lab', 80, 50,'https://images.unsplash.com/photo-1562774053-701939374585?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80'),
   ('Library Study Room', 'LIB', 1, NULL, 'Quite Study Room', 40, 8,'https://images.unsplash.com/photo-1568667256549-094345857637?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80'),
   ('Conference Room', 'ConR', 1, 'B','Conference room', 100, 20,'https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80'),
@@ -114,4 +137,33 @@ ON DUPLICATE KEY UPDATE
   createdAt = VALUES(createdAt),
   authorityLevel = VALUES(authorityLevel);
 
+-- Default Features
+INSERT INTO `RoomBookingDB`.`Features` (`name`)
+VALUES
+  ('Projector'),
+  ('Audio System'),
+  ('Wheelchair Access'),
+  ('Lab Equipment'),
+  ('Whiteboard'),
+  ('Quiet Zone'),
+  ('Power Outlets'),
+  ('Video Conferencing'),
+  ('Catering Available'),
+  ('Natural Light'),
+  ('Art Supplies'),
+  ('Flexible Seating'),
+  ('30 Computers'),
+  ('Software Suite')
+ON DUPLICATE KEY UPDATE
+  name = VALUES(name);
 
+-- Default Room Features
+-- -----------------------------------------------------
+INSERT INTO `RoomBookingDB`.`RoomFeatures` (`roomId`, `featureId`)
+VALUES 
+  (1, 1), (1, 2), (1, 3), -- Main Lecture Hall
+  (2, 4), (2, 1), (2, 5), -- Science Building Lab
+  (3, 6), (3, 5), (3, 7), -- Library Study Room
+  (4, 8), (4, 1), (4, 9), -- Conference Room
+  (5, 10), (5, 11), (5, 12), -- Arts Building Studio
+  (6, 13), (6, 1), (6, 14); -- Computer Lab

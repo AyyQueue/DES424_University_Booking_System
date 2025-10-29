@@ -4,9 +4,9 @@ import SignUpButton from "./components/SignUpButton.js";
 import useOldScript from "./script.js";
 import SignInModal from "./components/SignInModal.js";
 import SignUpModal from "./components/SignUpModal.js";
+import RoomsSection from "./components/RoomsSection.js";
 
 function App() {
-  const [user, setUser] = useState(null);
   const [signInModalActive, setSignInModalActive] = useState(false);
   const [signUpModalActive, setSignUpModalActive] = useState(false);
   useOldScript();
@@ -27,8 +27,8 @@ function App() {
             <ul>
               <li><a href="./index.html" className="active">Home</a></li>
               <li><a href="#rooms">Rooms</a></li>
-              <li><SignUpButton user={user} setSignUpModalActive={setSignUpModalActive}/></li> {/* Should be visible when signed out-->*/}
-              <li><SignInButton user={user} setUser={setUser} setSignInModalActive={setSignInModalActive}/></li> {/* Should be visible when signed in */}
+              <li><SignUpButton setSignUpModalActive={setSignUpModalActive}/></li> {/* Should be visible when signed out-->*/}
+              <li><SignInButton setSignInModalActive={setSignInModalActive}/></li> {/* Should be visible when signed in */}
             </ul>
           </nav>
         </div>
@@ -44,141 +44,7 @@ function App() {
         </div>
       </section>
 
-      {/* Rooms Section */}
-      <section id="rooms">
-        <div className="container">
-          <h2 className="section-title">Available Rooms</h2>
-          <div className="rooms-grid">
-            {/* Room 1 */}
-            <div className="room-card">
-              <div className="room-image" style={{backgroundImage: "url('./img/room1.jpg')"}}></div>
-              <div className="room-info">
-                <h3>Main Lecture Hall A</h3>
-                <div className="room-capacity">
-                  <i className="fas fa-users"></i>
-                  <span>Capacity: 150 people</span>
-                </div>
-                <div className="room-features">
-                  <span className="room-feature">Projector</span>
-                  <span className="room-feature">Audio System</span>
-                  <span className="room-feature">Wheelchair Access</span>
-                </div>
-                <span className="room-status available">Available</span>
-                <button className="btn book-btn" style={{width: "100%", marginTop: "1rem"}}
-                  data-room="Main Lecture Hall A">Book Now</button>
-              </div>
-            </div>
-
-            {/* Room 2 */}
-            <div className="room-card">
-              <div className="room-image"
-                style={{backgroundImage: "url('https://images.unsplash.com/photo-1562774053-701939374585?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80')"}}>
-              </div>
-              <div className="room-info">
-                <h3>Science Building Room 101</h3>
-                <div className="room-capacity">
-                  <i className="fas fa-users"></i>
-                  <span>Capacity: 50 people</span>
-                </div>
-                <div className="room-features">
-                  <span className="room-feature">Lab Equipment</span>
-                  <span className="room-feature">Projector</span>
-                  <span className="room-feature">Whiteboard</span>
-                </div>
-                <span className="room-status available">Available</span>
-                <button className="btn book-btn" style={{width: "100%", marginTop: "1rem"}}
-                  data-room="Science Building Room 101">Book Now</button>
-              </div>
-            </div>
-
-            {/* Room 3 */}
-            <div className="room-card">
-              <div className="room-image"
-                style={{backgroundImage: "url('https://images.unsplash.com/photo-1568667256549-094345857637?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80')"}}>
-              </div>
-              <div className="room-info">
-                <h3>Library Study Room 1</h3>
-                <div className="room-capacity">
-                  <i className="fas fa-users"></i>
-                  <span>Capacity: 8 people</span>
-                </div>
-                <div className="room-features">
-                  <span className="room-feature">Quiet Zone</span>
-                  <span className="room-feature">Whiteboard</span>
-                  <span className="room-feature">Power Outlets</span>
-                </div>
-                <span className="room-status booked">Booked Until 3 PM</span>
-                <button className="btn" style={{width: "100%", marginTop: "1rem"}} disabled>Currently Booked</button>
-              </div>
-            </div>
-
-            {/* Room 4 */}
-            <div className="room-card">
-              <div className="room-image"
-                style={{backgroundImage: "url('https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80')"}}>
-              </div>
-              <div className="room-info">
-                <h3>Conference Room B</h3>
-                <div className="room-capacity">
-                  <i className="fas fa-users"></i>
-                  <span>Capacity: 20 people</span>
-                </div>
-                <div className="room-features">
-                  <span className="room-feature">Video Conferencing</span>
-                  <span className="room-feature">Projector</span>
-                  <span className="room-feature">Catering Available</span>
-                </div>
-                <span className="room-status available">Available</span>
-                <button className="btn book-btn" style={{width: "100%", marginTop: "1rem"}}
-                  data-room="Conference Room B">Book Now</button>
-              </div>
-            </div>
-
-            {/* Room 5 */}
-            <div className="room-card">
-              <div className="room-image"
-                style={{backgroundImage: "url('https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80')"}}>
-              </div>
-              <div className="room-info">
-                <h3>Arts Building Studio</h3>
-                <div className="room-capacity">
-                  <i className="fas fa-users"></i>
-                  <span>Capacity: 30 people</span>
-                </div>
-                <div className="room-features">
-                  <span className="room-feature">Natural Light</span>
-                  <span className="room-feature">Art Supplies</span>
-                  <span className="room-feature">Flexible Seating</span>
-                </div>
-                <span className="room-status available">Available</span>
-                <button className="btn book-btn" style={{width: "100%", marginTop: "1rem"}}
-                  data-room="Arts Building Studio">Book Now</button>
-              </div>
-            </div>
-
-            {/* Room 6 */}
-            <div className="room-card">
-              <div className="room-image"
-                style={{backgroundImage: "url('https://images.unsplash.com/photo-1547658719-da2b51169166?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80')"}}>
-              </div>
-              <div className="room-info">
-                <h3>Computer Lab 3</h3>
-                <div className="room-capacity">
-                  <i className="fas fa-users"></i>
-                  <span>Capacity: 40 people</span>
-                </div>
-                <div className="room-features">
-                  <span className="room-feature">30 Computers</span>
-                  <span className="room-feature">Projector</span>
-                  <span className="room-feature">Software Suite</span>
-                </div>
-                <span className="room-status booked">Booked</span>
-                <button className="btn" style={{width: "100%", marginTop: "1rem"}} disabled>Currently Booked</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <RoomsSection/>
 
       {/* footer */}
       <footer>
@@ -233,7 +99,7 @@ function App() {
         </div>
       </div>
 
-      <SignInModal user={user} setUser={setUser} setSignInModalActive={setSignInModalActive} signInModalActive={signInModalActive}/>
+      <SignInModal setSignInModalActive={setSignInModalActive} signInModalActive={signInModalActive}/>
       <SignUpModal setSignUpModalActive={setSignUpModalActive} signUpModalActive={signUpModalActive}/>
 
       <script src="script.js"></script>

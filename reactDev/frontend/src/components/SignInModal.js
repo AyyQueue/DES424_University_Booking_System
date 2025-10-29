@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import { UserContext } from "../UserContext";
 
-export default function SignInModal({ user, setUser, signInModalActive, setSignInModalActive }) {
+export default function SignInModal({ signInModalActive, setSignInModalActive }) {
 
     const serverUrl = process.env.REACT_APP_BACKENDSERVER_URL;
     const [loginErrorMSG, setloginErrorMSG] = useState("");
     const [loading, setLoading] = useState(false);
+    const { user, setUser } = useContext(UserContext);
 
     // Global cursor effect
     useEffect(() => {
@@ -56,7 +58,8 @@ export default function SignInModal({ user, setUser, signInModalActive, setSignI
             const loginData = await response.json();
 
             if (loginData.status == "success") {
-                setUser(loginData.username);
+                // Store after login
+                setUser({ username: loginData.username, sessionKey: loginData.sessionKey });
                 setSignInModalActive(false);
                 setloginErrorMSG("");
             }

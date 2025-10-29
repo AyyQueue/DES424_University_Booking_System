@@ -1,14 +1,17 @@
-import React from "react";
+import React, { useContext } from "react";
+import { UserContext } from "../UserContext";
 
-export default function SignInButton({ user, setUser, setSignInModalActive }) {
+export default function SignInButton({setSignInModalActive }) {
 
-  const openLoginPage = () => {setSignInModalActive(true);};
+  const { user, setUser } = useContext(UserContext);
+
+  const openLoginPage = () => setSignInModalActive(true);
 
   const logOut = () => setUser(null);
 
   return (
     <button className="btn" onClick={user ? logOut : openLoginPage}>
-      {user ? `${user} - Sign Out` : "Sign In"}
+      {user ? `${user.username} - Sign Out` : "Sign In"}
     </button>
   );
 }

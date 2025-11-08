@@ -41,8 +41,8 @@ CREATE TABLE IF NOT EXISTS `RoomBookingDB`.`Users` (
   `email` VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL,
   `authorityLevel` TINYINT UNSIGNED NOT NULL,
   PRIMARY KEY (`idUsers`),
-  UNIQUE INDEX `username_UNIQUE` (`username` ASC) VISIBLE,
-  UNIQUE INDEX `email_UNIQUE` (`email` ASC) VISIBLE
+  UNIQUE INDEX `username_UNIQUE` (`username` ASC) ,
+  UNIQUE INDEX `email_UNIQUE` (`email` ASC)
 ) ENGINE = InnoDB;
 
 -- -----------------------------------------------------
@@ -57,8 +57,8 @@ CREATE TABLE IF NOT EXISTS `RoomBookingDB`.`Bookings` (
   `status` ENUM('PENDING', 'CONFIRMED', 'CANCELED') NOT NULL COMMENT 'e.g. pending, confirmed, canceled',
   `createdAt` DATETIME NULL,
   PRIMARY KEY (`idBookings`),
-  INDEX `userId_idx` (`userId` ASC) VISIBLE,
-  INDEX `roomId_idx` (`roomId` ASC) VISIBLE,
+  INDEX `userId_idx` (`userId` ASC),
+  INDEX `roomId_idx` (`roomId` ASC),
   CONSTRAINT `userId`
     FOREIGN KEY (`userId`)
     REFERENCES `RoomBookingDB`.`Users` (`idUsers`)
@@ -78,7 +78,7 @@ CREATE TABLE IF NOT EXISTS `RoomBookingDB`.`Features` (
   `idFeatures` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(25) NOT NULL,
   PRIMARY KEY (`idFeatures`),
-  UNIQUE INDEX `name_UNIQUE` (`name` ASC) VISIBLE
+  UNIQUE INDEX `name_UNIQUE` (`name` ASC)
 ) ENGINE = InnoDB;
 
 -- -----------------------------------------------------
@@ -89,8 +89,8 @@ CREATE TABLE IF NOT EXISTS `RoomBookingDB`.`RoomFeatures` (
   `roomId` INT NOT NULL,
   `featureId` INT NOT NULL,
   PRIMARY KEY (`idRoomFeatures`),
-  INDEX `roomId_idx` (`roomId` ASC) VISIBLE,
-  INDEX `featureId_idx` (`featureId` ASC) VISIBLE,
+  INDEX `roomId_idx` (`roomId` ASC),
+  INDEX `featureId_idx` (`featureId` ASC),
   CONSTRAINT `fk_room`
     FOREIGN KEY (`roomId`)
     REFERENCES `RoomBookingDB`.`Rooms` (`idRooms`)

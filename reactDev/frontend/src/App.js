@@ -5,6 +5,7 @@ import useOldScript from "./script.js";
 import SignInModal from "./components/SignInModal.js";
 import SignUpModal from "./components/SignUpModal.js";
 import RoomsSection from "./components/RoomsSection.js";
+import ViewBookBTN from "./components/ViewBookBTN.js";
 
 function App() {
   const [signInModalActive, setSignInModalActive] = useState(false);
@@ -44,6 +45,7 @@ function App() {
         </div>
       </section>
 
+      <ViewBookBTN/> {/* Needs to be visible only when logged in */}
       <RoomsSection/>
 
       {/* footer */}

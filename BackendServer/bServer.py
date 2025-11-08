@@ -5,13 +5,14 @@ import mysql.connector
 from mysql.connector import pooling, Error
 import bcrypt
 import secrets
+from datetime import datetime, timedelta
 import os
 
 # Create a connection pool at startup
 dbconfig = {
     "host": "localhost",
     "user": "root",
-    "password": "admin",
+    "password": "root", # Change this to your own root password (In my case)
     "database": "RoomBookingDB",
     "port": 3306
 }
@@ -166,8 +167,8 @@ def get_rooms():
             """, (room['idRooms'],))
             features = [f['name'] for f in cursor.fetchall()]
             room['features'] = features
-            room['image'] = room.pop('imageURL')  # rename to match frontend
-            room['capacity'] = room.pop('capicity')  # rename to match frontend
+            room['image'] = room.pop('imageURL')
+            room['capacity'] = room.pop('capicity')
 
         return jsonify(rooms)
 
@@ -179,11 +180,194 @@ def get_rooms():
         cursor.close()
         conn.close()
 
+@app.route("/view-bookings", methods=["GET"])
+def view_bookings():
+    session_key = request.headers.get('sessionKey')
+    if not session_key:
+        return jsonify({"status": "failure", "message": "No session key provided"}), 401
+
+    conn = connection_pool.get_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    try:
+        # Verify session
+        cursor.execute("""
+            SELECT idUsers, username 
+            FROM Users 
+            WHERE sessionKey = %s
+        """, (session_key,))
+        
+        user = cursor.fetchone()
+        if not user:
+            return jsonify({"status": "failure", "message": "Invalid session"}), 401
+
+        # Get bookings - note the column names match the DB schema
+        cursor.execute("""
+            SELECT 
+                b.idBookings,
+                b.startTime,
+                b.endTime,
+                b.status,
+                r.name as roomName,
+                r.capicity as capacity,
+                r.buildingCode,
+                r.roomNumber,
+                r.imageURL
+            FROM Bookings b
+            JOIN Rooms r ON b.roomId = r.idRooms
+            WHERE b.userId = %s
+            ORDER BY b.startTime ASC
+        """, (user['idUsers'],))
+
+        bookings = cursor.fetchall()
+
+        # Format datetime objects for JSON
+        for booking in bookings:
+            booking['startTime'] = booking['startTime'].strftime('%Y-%m-%d %H:%M')
+            booking['endTime'] = booking['endTime'].strftime('%Y-%m-%d %H:%M')
+
+        return jsonify({
+            "status": "success",
+            "bookings": bookings
+        })
+
+    except Error as e:
+        print("Database error:", e)
+        return jsonify({
+            "status": "failure",
+            "message": "Database error"
+        }), 500
+
+    finally:
+        cursor.close()
+        conn.close()
 
 
+def normalize_local_sql_dt(s: str) -> str:
+    """
+    Accepts:
+      - 'YYYY-MM-DDTHH:MM' / 'YYYY-MM-DDTHH:MM:SS'
+      - 'YYYY-MM-DD HH:MM' / 'YYYY-MM-DD HH:MM:SS'
+      - with optional fractional seconds and/or trailing 'Z'
+    Returns canonical local-naive: 'YYYY-MM-DD HH:MM:SS'
+    """
+    if s is None:
+        raise ValueError("datetime is None")
+    s = str(s).strip()
+    s = s.replace("T", " ")
+    s = s.split("Z")[0]         # drop trailing Z
+    s = s.split(".")[0]         # drop fractional seconds
+    if len(s) == 16:            # 'YYYY-MM-DD HH:MM'
+        s += ":00"
+    # validate shape
+    datetime.strptime(s, "%Y-%m-%d %H:%M:%S")
+    return s
+@app.route("/bookings", methods=["POST"])   
+def create_booking():
+    # auth: header 'sessionKey' or form fallback
+    session_key = request.headers.get("sessionKey") or request.form.get("sessionKey")
+    if not session_key:
+        return jsonify({"status": "failure", "message": "No session key provided"}), 401
 
+    # accept JSON or form
+    data = request.get_json(silent=True) or {}
+    room_id = data.get("roomId") or request.form.get("roomId")
+    start_str = data.get("startTime") or request.form.get("startTime")
+    end_str   = data.get("endTime") or request.form.get("endTime")            # optional
+    duration  = data.get("durationMinutes") or request.form.get("durationMinutes")  # optional
 
+    # debug to see what you actually received
+    print("POST /bookings payload:",
+          {"roomId": room_id, "startTime": start_str, "endTime": end_str, "duration": duration})
 
+    if not room_id:
+        return jsonify({"status": "failure", "message": "roomId is required"}), 400
+    if not start_str:
+        return jsonify({"status": "failure", "message": "startTime is required"}), 400
+
+    # normalize + parse start (never call helper without an arg)
+    try:
+        start_str = normalize_local_sql_dt(start_str)
+        start_dt  = datetime.strptime(start_str, "%Y-%m-%d %H:%M:%S")
+    except Exception as e:
+        print("normalize start error:", e)
+        return jsonify({"status": "failure", "message": "Invalid startTime"}), 400
+
+    # derive end time: prefer durationMinutes; else accept explicit endTime
+    if duration not in (None, "", []):
+        try:
+            mins = int(duration)
+            if mins <= 0:
+                return jsonify({"status": "failure", "message": "durationMinutes must be > 0"}), 400
+        except Exception:
+            return jsonify({"status": "failure", "message": "durationMinutes must be an integer"}), 400
+        end_dt = start_dt + timedelta(minutes=mins)
+        end_str = end_dt.strftime("%Y-%m-%d %H:%M:%S")
+    else:
+        if not end_str:
+            return jsonify({"status": "failure", "message": "Provide endTime or durationMinutes"}), 400
+        try:
+            end_str = normalize_local_sql_dt(end_str)
+            end_dt  = datetime.strptime(end_str, "%Y-%m-%d %H:%M:%S")
+        except Exception as e:
+            print("normalize end error:", e)
+            return jsonify({"status": "failure", "message": "Invalid endTime"}), 400
+
+    if not (start_dt < end_dt):
+        return jsonify({"status": "failure", "message": "endTime must be after startTime"}), 400
+
+    conn = connection_pool.get_connection()
+    cursor = conn.cursor(dictionary=True)
+    try:
+        # verify session -> user
+        cursor.execute("""
+            SELECT idUsers, authorityLevel
+            FROM Users
+            WHERE sessionKey = %s
+        """, (session_key,))
+        user = cursor.fetchone()
+        if not user:
+            return jsonify({"status": "failure", "message": "Invalid session"}), 401
+
+        # room exists (optional access check)
+        cursor.execute("SELECT accesLevel FROM Rooms WHERE idRooms = %s", (room_id,))
+        if not cursor.fetchone():
+            return jsonify({"status": "failure", "message": "Room not found"}), 404
+
+        # conflict check
+        cursor.execute("""
+            SELECT COUNT(*) AS cnt
+            FROM Bookings
+            WHERE roomId = %s
+              AND NOT (endTime <= %s OR startTime >= %s)
+              AND status <> 'cancelled'
+        """, (room_id, start_dt, end_dt))
+        if cursor.fetchone()["cnt"] > 0:
+            return jsonify({"status": "failure", "message": "Time slot already booked"}), 409
+
+        # insert
+        cursor.execute("""
+            INSERT INTO Bookings (roomId, userId, startTime, endTime, status, createdAt)
+            VALUES (%s, %s, %s, %s, %s, NOW())
+        """, (room_id, user["idUsers"], start_dt, end_dt, "confirmed"))
+        conn.commit()
+        booking_id = cursor.lastrowid
+
+        return jsonify({
+            "status": "success",
+            "message": "Booking created",
+            "bookingId": booking_id,
+            "roomId": room_id,
+            "startTime": start_str,
+            "endTime": end_str
+        }), 201
+
+    except Error as e:
+        print("❌ Database error:", e)
+        return jsonify({"status": "failure", "message": "Database error"}), 500
+    finally:
+        cursor.close()
+        conn.close()
 
 # Run the server (only if this file is executed directly)
 if __name__ == "__main__":

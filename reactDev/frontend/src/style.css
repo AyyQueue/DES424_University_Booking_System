@@ -25,7 +25,7 @@ body {
 /* Header Styles */
 header {
     background-color: var(--primary);
-    color: white;
+    
     padding: 1rem;
     position: sticky;
     top: 0;
@@ -42,6 +42,7 @@ header {
 }
 
 .logo {
+    color: white;
     display: flex;
     align-items: center;
     gap: 10px;
@@ -421,6 +422,102 @@ footer {
     color: #aaa;
     font-size: 0.9rem;
 }
+
+.bookings-list {
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.booking-item-card {
+  background: #f8f9fa;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  transition: box-shadow 0.2s ease;
+}
+
+.booking-item-card:hover {
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.booking-details {
+  flex: 1;
+}
+
+.booking-details p.room-locationInfo {
+  margin-bottom: 5px;
+}
+
+.booking-time {
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.booking-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5rem;
+  flex: 0 0 auto;
+}
+
+.room-locationInfo {
+  font-style: italic;
+  color: #555;      
+  font-size: 0.9rem;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.status-badge.canceled {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.status-badge.active {
+  background: #d4edda;
+  color: #155724;
+}
+
+.cancel-btn {
+  margin-left: 10px;
+  min-width: 90px;
+}
+
+.cancel-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* Optional: Make scrollbar look nice */
+.bookings-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.bookings-list::-webkit-scrollbar-thumb {
+  background-color: rgba(0,0,0,0.3);
+  border-radius: 4px;
+}
+
+.bookings-list::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0,0,0,0.5);
+}
+
 
 /* Mobile Styles */
 @media (max-width: 768px) {

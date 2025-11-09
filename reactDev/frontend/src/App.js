@@ -6,10 +6,13 @@ import SignInModal from "./components/SignInModal.js";
 import SignUpModal from "./components/SignUpModal.js";
 import RoomsSection from "./components/RoomsSection.js";
 import ViewBookBTN from "./components/ViewBookBTN.js";
+import BookingsModal from "./components/BookingsModal.js"; 
 
 function App() {
   const [signInModalActive, setSignInModalActive] = useState(false);
   const [signUpModalActive, setSignUpModalActive] = useState(false);
+  const [showBookingsModal, setShowBookingsModal] = useState(false);
+  const [bookings, setBookings] = useState([]); 
   useOldScript();
 
   return (
@@ -28,6 +31,7 @@ function App() {
             <ul>
               <li><a href="./index.html" className="active">Home</a></li>
               <li><a href="#rooms">Rooms</a></li>
+              <li><ViewBookBTN setBookings={setBookings} setShowModal={setShowBookingsModal}/></li> {/* Needs to be visible only when logged in */}
               <li><SignUpButton setSignUpModalActive={setSignUpModalActive}/></li> {/* Should be visible when signed out-->*/}
               <li><SignInButton setSignInModalActive={setSignInModalActive}/></li> {/* Should be visible when signed in */}
             </ul>
@@ -45,7 +49,7 @@ function App() {
         </div>
       </section>
 
-      <ViewBookBTN/> {/* Needs to be visible only when logged in */}
+      
       <RoomsSection/>
 
       {/* footer */}
@@ -103,6 +107,7 @@ function App() {
 
       <SignInModal setSignInModalActive={setSignInModalActive} signInModalActive={signInModalActive}/>
       <SignUpModal setSignUpModalActive={setSignUpModalActive} signUpModalActive={signUpModalActive}/>
+      <BookingsModal show={showBookingsModal} onClose={() => setShowBookingsModal(false)} bookings={bookings} setBookings={setBookings}/>
 
       <script src="script.js"></script>
     </div>

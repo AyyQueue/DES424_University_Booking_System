@@ -22,11 +22,11 @@ export default function RoomsSection({}) {
             setLoading(true);
             try {
                 const response = await fetch(`${serverUrl}/rooms`, {
-                    method: "POST",
+                    method: "GET",
                     headers: {
                         "Content-Type": "application/json",
+                        "sessionKey": user?.sessionKey,
                     },
-                    body: JSON.stringify({ sessionKey: user?.sessionKey}),
                 });
                 const data = await response.json();
                 setRooms(Array.isArray(data) ? data : []);

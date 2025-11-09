@@ -12,7 +12,7 @@ import os
 dbconfig = {
     "host": "localhost",
     "user": "root",
-    "password": "root", # Change this to your own root password (In my case)
+    "password": "admin", # Change this to your own root password (In my case)
     "database": "RoomBookingDB",
     "port": 3306
 }
@@ -32,7 +32,7 @@ except Error as e:
 app = Flask(__name__)
 
 # allows React frontend on different port to fetch registerData
-CORS(app)  
+CORS(app, supports_credentials=True)
 
 allowed = re.compile(r'^[a-zA-Z0-9!@#$%^&*()_\-+=]+$')
 
@@ -133,10 +133,11 @@ def register():
         if cursor: cursor.close()
         if conn: conn.close()
 
-@app.route("/rooms", methods=["POST"])
+@app.route("/rooms", methods=["GET"])
 def get_rooms():
-    requestData = request.get_json()
-    sessionKey = requestData.get("sessionKey")
+    sessionKey = request.headers.get("sessionKey")
+    if not sessionKey:
+        return jsonify({"error": "No session key provided"}), 401
 
     conn = connection_pool.get_connection()
     cursor = conn.cursor(dictionary=True)
@@ -364,6 +365,50 @@ def create_booking():
 
     except Error as e:
         print("❌ Database error:", e)
+        return jsonify({"status": "failure", "message": "Database error"}), 500
+    finally:
+        cursor.close()
+        conn.close()
+
+@app.route("/cancel-booking", methods=["POST"])
+def cancel_booking():
+    data = request.get_json()
+    booking_id = data.get("bookingId")
+    session_key = request.headers.get("sessionKey")
+
+    if not booking_id:
+        return jsonify({"status": "failure", "message": "No booking ID provided"}), 400
+    if not session_key:
+        return jsonify({"status": "failure", "message": "No session key provided"}), 401
+
+    conn = connection_pool.get_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    try:
+        # Verify user session
+        cursor.execute("SELECT idUsers FROM Users WHERE sessionKey = %s", (session_key,))
+        user = cursor.fetchone()
+        if not user:
+            return jsonify({"status": "failure", "message": "Invalid session"}), 401
+
+        # Optional: make sure the booking belongs to this user
+        cursor.execute("SELECT * FROM Bookings WHERE idBookings = %s AND userId = %s", 
+                       (booking_id, user["idUsers"]))
+        booking = cursor.fetchone()
+        if not booking:
+            return jsonify({"status": "failure", "message": "Booking not found"}), 404
+
+        # Only cancel if not already canceled
+        if booking["status"].lower() == "canceled":
+            return jsonify({"status": "failure", "message": "Booking already canceled"}), 400
+
+        # Update booking status
+        cursor.execute("UPDATE Bookings SET status = 'Canceled' WHERE idBookings = %s", (booking_id,))
+        conn.commit()
+
+        return jsonify({"status": "success", "message": "Booking canceled"})
+    except Error as e:
+        print("Database error:", e)
         return jsonify({"status": "failure", "message": "Database error"}), 500
     finally:
         cursor.close()

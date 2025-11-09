@@ -22,7 +22,7 @@ function App() {
         <div className="header-container">
           <div className="logo">
             <i className="fas fa-door-open"></i>
-            <span>SIITRoomBook</span>
+            <span>UniRoomBook</span>
           </div>
           <button className="mobile-menu-btn" id="mobileMenuBtn">
             <i className="fas fa-bars"></i>
@@ -78,7 +78,7 @@ function App() {
           <div className="footer-column">
             <h3>Contact Us</h3>
             <ul className="footer-links">
-              <li><i className="fas fa-map-marker-alt"></i> Thamasat University, ragsit campus</li>
+              <li><i className="fas fa-map-marker-alt"></i> Thammasat University, Rangsit Campus</li>
               <li><i className="fas fa-phone"></i> 123-456-7890</li>
               <li><i className="fas fa-envelope"></i> Cloudbase@gmail.com</li>
               <li><i className="fas fa-clock"></i> Mon-Fri: 8AM-6PM</li>

@@ -5,39 +5,39 @@ import RoomCard from "./RoomCard";
 import SearchBar from "./SeachBar";
 
 export default function RoomsSection() {
-  const [rooms, setRooms] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const serverUrl = process.env.REACT_APP_BACKENDSERVER_URL;
-  const { user, setUser } = useContext(UserContext); // keep original shape
+    const [rooms, setRooms] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const serverUrl = process.env.REACT_APP_BACKENDSERVER_URL;
+    const { user, setUser } = useContext(UserContext); // keep original shape
 
-  // States that will use in the search bar for filtering as well
-  const [q, setQ] = useState("");           // text search: name/building/room
-  const [building, setBuilding] = useState("");
-  const [minCap, setMinCap] = useState(""); // numeric string; empty = ignore
-  // (optional) features later if you want:
-  // const [features, setFeatures] = useState([]);
+    // States that will use in the search bar for filtering as well
+    const [q, setQ] = useState("");           // text search: name/building/room
+    const [building, setBuilding] = useState("");
+    const [minCap, setMinCap] = useState(""); // numeric string; empty = ignore
+    // (optional) features later if you want:
+    // const [features, setFeatures] = useState([]);
 
-  // ---- paging (unchanged) ----
-  const [page, setPage] = useState(1);
-  const pageSize = 5; // your test size
+    // ---- paging (unchanged) ----
+    const [page, setPage] = useState(1);
+    const pageSize = 5; // your test size
 
-  useEffect(() => {
-    if (!user) {
-      setRooms([]);
-      return;
-    }
+    useEffect(() => {
+      if (!user) {
+        setRooms([]);
+        return;
+      }
 
-    const fetchRooms = async () => {
-      setLoading(true);
-      try {
-        // ORIGINAL working call: GET /rooms with sessionKey header
-        const response = await fetch(`${serverUrl}/rooms`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            sessionKey: user?.sessionKey || "",
-          },
-        });
+      const fetchRooms = async () => {
+        setLoading(true);
+        try {
+          // ORIGINAL working call: GET /rooms with sessionKey header
+          const response = await fetch(`${serverUrl}/rooms`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              sessionKey: user?.sessionKey || "",
+            },
+          });
 
         // If your backend expects POST with body instead, swap to:
         // const response = await fetch(`${serverUrl}/rooms`, {
@@ -67,26 +67,28 @@ export default function RoomsSection() {
     fetchRooms();
   }, [user, serverUrl, setUser]);
 
-  if (loading) return <p>Loading rooms...</p>;
+    if (loading) return <p>Loading rooms...</p>;
 
-  // ---- NEW: client-side filtering (minimal, fast, safe) ----
-  const filtered = (() => {
-    const needle = q.trim().toLowerCase();
-    const min = Number(minCap) || 0;
+    // ---- NEW: client-side filtering (minimal, fast, safe) ----
+    const filtered = (() => {
+      const needle = q.trim().toLowerCase();
+      const bNeedle = building.trim().toLowerCase();   // ← normalize once
+      const min = Number(minCap) || 0;
 
-    return rooms.filter((r) => {
+      return rooms.filter((r) => {
       const name = (r.name || "").toLowerCase();
       const bld  = (r.buildingCode || "").toLowerCase();
       const num  = (r.roomNumber || "").toLowerCase();
       const cap  = Number(r.capacity ?? r.capicity ?? 0);
 
       if (needle && !(name.includes(needle) || bld.includes(needle) || num.includes(needle))) return false;
-      if (building && bld !== building.toLowerCase()) return false;
+      if (bNeedle && !bld.includes(bNeedle)) return false;   // ← substring match, not strict equal
       if (min && cap < min) return false;
 
       return true;
     });
   })();
+
 
   // ---- existing pagination over the filtered list ----
   const total = filtered.length;

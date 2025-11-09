@@ -84,6 +84,7 @@ export default function RoomCard({ room }) {
           <i className="fas fa-users"></i>
           <span>Capacity: {room.capacity} people</span>
         </div>
+        
 
         <div className="room-features">
           {(features ?? []).length ? (

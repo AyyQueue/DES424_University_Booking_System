@@ -46,7 +46,7 @@ def login():
     loginData = request.get_json()
     username = loginData.get("username", "").strip()
     password = loginData.get("password", "").strip()
-
+    
     # Get a connection from the pool
     conn = connection_pool.get_connection()
     cursor = conn.cursor(dictionary=True)  # so we can access columns by name
@@ -420,22 +420,12 @@ def search_rooms():
     if not session_key:
         return jsonify({"status": "failure", "message": "No session key provided"}), 401
 
-    # Query params
-    q        = (request.args.get("q") or "").strip()
-    building = (request.args.get("building") or "").strip()
-    cap_min  = request.args.get("capacity_min", type=int)
-    features = [f.strip() for f in (request.args.get("features") or "").split(",") if f.strip()]
-    date     = (request.args.get("date") or "").strip()  # optional YYYY-MM-DD
-    page     = max(1, request.args.get("page", default=1, type=int))
-    size     = min(50, request.args.get("size", default=12, type=int))
-    off      = (page - 1) * size
-
     conn = connection_pool.get_connection()
     cur = conn.cursor(dictionary=True)
     try:
-        # Verify session → get authority level
+        # verify session -> authority level
         cur.execute("""
-            SELECT idUsers, username, authorityLevel
+            SELECT idUsers, authorityLevel
             FROM Users
             WHERE sessionKey = %s
         """, (session_key,))
@@ -444,79 +434,84 @@ def search_rooms():
             return jsonify({"status": "failure", "message": "Invalid session"}), 401
         user_auth_level = user["authorityLevel"]
 
-        # Build WHERE/JOIN parts
-        where = ["r.accesLevel <= %s", "r.isActive = 1"]
+        # ---- parse query params ----
+        q         = (request.args.get("q") or "").strip()
+        building  = (request.args.get("building") or "").strip()
+        cap_min   = request.args.get("capacity_min", type=int)
+        features  = [f.strip() for f in (request.args.get("features","").split(",") if request.args.get("features") else [])]
+        date_str  = (request.args.get("date") or "").strip()  # YYYY-MM-DD
+        page      = max(1, request.args.get("page", default=1, type=int))
+        size      = min(50, request.args.get("size", default=12, type=int))
+        off       = (page - 1) * size
+
+        where = ["r.accesLevel <= %s"]
         params = [user_auth_level]
 
         if q:
-            like = f"%{q}%"
-            where.append("(r.name LIKE %s OR r.buildingCode LIKE %s OR r.roomNumber LIKE %s)")
-            params += [like, like, like]
+            # case-insensitive substring match across name, buildingCode, roomNumber
+            where.append("(UPPER(r.name) LIKE %s OR UPPER(r.buildingCode) LIKE %s OR UPPER(r.roomNumber) LIKE %s)")
+            k = f"%{q.upper()}%"
+            params += [k, k, k]
 
         if building:
-            where.append("r.buildingCode = %s")
-            params.append(building)
+            # case-insensitive substring on buildingCode
+            where.append("UPPER(r.buildingCode) LIKE %s")
+            params.append(f"%{building.upper()}%")
 
         if cap_min is not None:
-            where.append("r.capicity >= %s")
+            where.append("r.capicity >= %s") 
             params.append(cap_min)
 
+        # features filter (room must have all requested features to match)
         join_features = ""
         if features:
-            # Require ALL requested features
-            placeholders = ",".join(["%s"] * len(features))
+            ph = ",".join(["%s"] * len(features))
             join_features = f"""
               JOIN (
-                SELECT rf.roomId, COUNT(*) AS c
+                SELECT rf.roomId, COUNT(*) c
                 FROM RoomFeatures rf
                 JOIN Features f ON rf.featureId = f.idFeatures
-                WHERE f.name IN ({placeholders})
+                WHERE UPPER(f.name) IN ({ph})
                 GROUP BY rf.roomId
               ) fx ON fx.roomId = r.idRooms AND fx.c = {len(features)}
             """
-            params += features
+            params += [f.upper() for f in features]
 
+        # availability on the given date: exclude rooms that have a non-cancelled booking that day
         exclude_busy = ""
-        if date:
-            # Exclude rooms having any non-cancelled booking on that date
+        if date_str:
             exclude_busy = """
               AND NOT EXISTS (
                 SELECT 1
                 FROM Bookings b
                 WHERE b.roomId = r.idRooms
                   AND DATE(b.startTime) = %s
-                  AND LOWER(b.status) <> 'cancelled'
+                  AND b.status <> 'cancelled'
               )
             """
-            params.append(date)
+            params.append(date_str)
 
-        base_sql = f"""
+        base = f"""
           FROM Rooms r
           {join_features}
           WHERE {" AND ".join(where)} {exclude_busy}
         """
 
-        # Total count
-        cur.execute(f"SELECT COUNT(*) AS cnt {base_sql}", params)
+        # total
+        cur.execute(f"SELECT COUNT(*) AS cnt {base}", params)
         total = cur.fetchone()["cnt"]
 
-        # Page results
+        # page
         cur.execute(f"""
-          SELECT
-            r.idRooms,
-            r.name,
-            r.capicity   AS capacity,
-            r.imageURL   AS image,
-            r.accesLevel,
-            r.buildingCode,
-            r.roomNumber
-          {base_sql}
+          SELECT r.idRooms, r.name, r.capicity AS capacity,
+                 r.imageURL AS image, r.buildingCode, r.roomNumber
+          {base}
           ORDER BY r.name
           LIMIT %s OFFSET %s
         """, params + [size, off])
         rooms = cur.fetchall()
 
-        # Attach features list per room
+        # attach the features for each room
         for r in rooms:
             cur.execute("""
               SELECT f.name
@@ -526,19 +521,15 @@ def search_rooms():
             """, (r["idRooms"],))
             r["features"] = [row["name"] for row in cur.fetchall()]
 
-        return jsonify({
-            "status": "success",
-            "total": total,
-            "page": page,
-            "size": size,
-            "rooms": rooms
-        })
+        return jsonify({"status": "success", "total": total, "page": page, "size": size, "rooms": rooms})
+
     except Error as e:
-        print("❌ Database error (search):", e)
+        print("❌ Database error:", e)
         return jsonify({"status": "failure", "message": "Database error"}), 500
     finally:
         cur.close()
         conn.close()
+
 
 # Run the server (only if this file is executed directly)
 if __name__ == "__main__":

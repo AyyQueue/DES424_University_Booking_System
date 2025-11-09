@@ -8,18 +8,18 @@ export default function RoomsSection() {
     const [rooms, setRooms] = useState([]);
     const [loading, setLoading] = useState(false);
     const serverUrl = process.env.REACT_APP_BACKENDSERVER_URL;
-    const { user, setUser } = useContext(UserContext); // keep original shape
+    const { user, setUser } = useContext(UserContext);
 
-    // States that will use in the search bar for filtering as well
+    // States that will use in the search bar for filtering rooms
     const [q, setQ] = useState("");           // text search: name/building/room
-    const [building, setBuilding] = useState("");
+    const [building, setBuilding] = useState(""); // **NOTE that this part is not used in the backend yet** because of building filtering may not be implemented yet.
     const [minCap, setMinCap] = useState(""); // numeric string; empty = ignore
-    // (optional) features later if you want:
+    // (optional) features later if you want to implement in the search bar (BUT not added into the searchbar UI or logic yet)
     // const [features, setFeatures] = useState([]);
 
     // ---- paging (unchanged) ----
     const [page, setPage] = useState(1);
-    const pageSize = 5; // your test size
+    const pageSize = 5; // The default test size is 5 to see room per pages (Adjustable to any number)
 
     useEffect(() => {
       if (!user) {
@@ -30,7 +30,7 @@ export default function RoomsSection() {
       const fetchRooms = async () => {
         setLoading(true);
         try {
-          // ORIGINAL working call: GET /rooms with sessionKey header
+          // call GET /rooms with sessionKey header
           const response = await fetch(`${serverUrl}/rooms`, {
             method: "GET",
             headers: {
@@ -38,14 +38,7 @@ export default function RoomsSection() {
               sessionKey: user?.sessionKey || "",
             },
           });
-
-        // If your backend expects POST with body instead, swap to:
-        // const response = await fetch(`${serverUrl}/rooms`, {
-        //   method: "POST",
-        //   headers: { "Content-Type": "application/json" },
-        //   body: JSON.stringify({ sessionKey: user?.sessionKey || "" }),
-        // });
-
+          
         if (response.status === 401) {
           // optional: auto sign-out on invalid session
           setUser?.(null);
@@ -69,10 +62,10 @@ export default function RoomsSection() {
 
     if (loading) return <p>Loading rooms...</p>;
 
-    // ---- NEW: client-side filtering (minimal, fast, safe) ----
+    // Fast filtering on the client side (Renders when rooms, q, building, minCap change)
     const filtered = (() => {
       const needle = q.trim().toLowerCase();
-      const bNeedle = building.trim().toLowerCase();   // ← normalize once
+      const bNeedle = building.trim().toLowerCase();   // normalize once
       const min = Number(minCap) || 0;
 
       return rooms.filter((r) => {
@@ -82,7 +75,7 @@ export default function RoomsSection() {
       const cap  = Number(r.capacity ?? r.capicity ?? 0);
 
       if (needle && !(name.includes(needle) || bld.includes(needle) || num.includes(needle))) return false;
-      if (bNeedle && !bld.includes(bNeedle)) return false;   // ← substring match, not strict equal
+      if (bNeedle && !bld.includes(bNeedle)) return false;   // substring match, not strict equal
       if (min && cap < min) return false;
 
       return true;
@@ -90,7 +83,7 @@ export default function RoomsSection() {
   })();
 
 
-  // ---- existing pagination over the filtered list ----
+  // existing pagination over the filtered list 
   const total = filtered.length;
   const startIdx = total ? (page - 1) * pageSize : 0;
   const endIdx = total ? Math.min(startIdx + pageSize, total) : 0;
@@ -107,7 +100,7 @@ export default function RoomsSection() {
       <div className="container">
         <h2 className="section-title">Available Rooms</h2>
 
-        {/* Minimal search bar; your component can ignore unused props */}
+        {/* Minimal search bar; the component can ignore unused props */}
         <SearchBar
           q={q}
           onQ={(v) => { setPage(1); setQ(v); }}

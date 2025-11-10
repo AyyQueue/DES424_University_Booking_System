@@ -161,7 +161,7 @@ def get_rooms():
         # Attach features to each room
         for room in rooms:
             cursor.execute("""
-                SELECT f.name
+                SELECT DISTINCT f.name
                 FROM RoomFeatures rf
                 JOIN Features f ON rf.featureId = f.idFeatures
                 WHERE rf.roomId = %s
@@ -341,7 +341,7 @@ def create_booking():
             FROM Bookings
             WHERE roomId = %s
               AND NOT (endTime <= %s OR startTime >= %s)
-              AND status <> 'cancelled'
+              AND status <> 'Canceled'
         """, (room_id, start_dt, end_dt))
         if cursor.fetchone()["cnt"] > 0:
             return jsonify({"status": "failure", "message": "Time slot already booked"}), 409

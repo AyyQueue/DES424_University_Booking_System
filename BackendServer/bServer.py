@@ -8,11 +8,20 @@ import secrets
 from datetime import datetime, timedelta
 import os
 
-# Create a connection pool at startup
+# LOCAL
+# dbconfig = {
+#     "host": "localhost",
+#     "user": "root",
+#     "password": "root", # Change this to your own root password (In my case)
+#     "database": "RoomBookingDB",
+#     "port": 3306
+# }
+
+# AWS
 dbconfig = {
-    "host": "localhost",
-    "user": "root",
-    "password": "root", # Change this to your own root password (In my case)
+    "host": "uni-room-booking-db.cbk2ewumyiw9.ap-southeast-1.rds.amazonaws.com",
+    "user": "admin",
+    "password": "Web2Book!UniRoom", # Change this to your own root password (In my case)
     "database": "RoomBookingDB",
     "port": 3306
 }
@@ -32,7 +41,16 @@ except Error as e:
 app = Flask(__name__)
 
 # allows React frontend on different port to fetch registerData
-CORS(app, supports_credentials=True)
+#CORS(app, supports_credentials=True) # Localhost development
+
+# AWS CORS setup
+CORS(
+    app,
+    supports_credentials=True,
+    origins=[
+        "https://d10s9vi7fkb2zx.cloudfront.net"
+    ]
+)
 
 allowed = re.compile(r'^[a-zA-Z0-9!@#$%^&*()_\-+=]+$')
 

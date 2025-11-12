@@ -127,7 +127,7 @@ INSERT INTO `RoomBookingDB`.`Users`
 VALUES -- Passwords are hashed using bcrypt (admin password is 'admin', others are '123')
   ('admin', '$2b$12$uQv1HwrSRtXPS0c0dWezueP4O64tJXjAQlIVSa6OKZQjN2c3OIb0y', '', NOW(), 'admin@admin.com', 255),
   ('Mads', '$2b$12$.sxkbOcvmj7ltWBethRih.vPqyF5LsjkgYmZm1yzLU50nR4.LUNOC', '', NOW(), '6822808217@g.siit.tu.ac.th', 50),
-  ('Julius', '2b$12$QHMELjUe.2UM4EGI/p/JiO8rXMirH32p1tM0SgjXuqE.tMtRDjKe6', '', NOW(), '6822808258@g.siit.tu.ac.th', 50),
+  ('Julius', '$2b$12$QHMELjUe.2UM4EGI/p/JiO8rXMirH32p1tM0SgjXuqE.tMtRDjKe6', '', NOW(), '6822808258@g.siit.tu.ac.th', 50),
   ('Anders', '$2b$12$UDyweEKOoxhOCHuljdnIde8jkid1NVzmvWERJC.SQv9mLZGL0kXQi', '', NOW(), '6822808209@g.siit.tu.ac.th', 50),
   ('Poramat', '$2b$12$opFrL7Mu970Hxrip7PqEBelYNDtw0AEjgM6D/CLjKe5lRlkFQfDku', '', NOW(), '6722800255@g.siit.tu.ac.th', 50),
   ('Chayanon', '$2b$12$I.sId4hAdF48uSkUdXquVOwGFOp5T2wPdfJYMZn9DukzYQWIY8Q7i', '', NOW(), '6522780426@g.siit.tu.ac.th', 50),

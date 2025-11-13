@@ -19,10 +19,10 @@ import os
 
 # AWS
 dbconfig = {
-    "host": "uni-room-booking-db.cbk2ewumyiw9.ap-southeast-1.rds.amazonaws.com",
-    "user": "admin",
-    "password": "Web2Book!UniRoom", # Change this to your own root password (In my case)
-    "database": "RoomBookingDB",
+    "host": os.getenv("DB_HOST"),
+    "user": os.getenv("DB_USER"),
+    "password": os.getenv("DB_PASSWORD"),
+    "database": os.getenv("DB_NAME"),
     "port": 3306
 }
 
@@ -48,7 +48,7 @@ CORS(
     app,
     supports_credentials=True,
     origins=[
-        "https://d10s9vi7fkb2zx.cloudfront.net"
+        "http://uni-room-booking-des-website.s3-website-ap-southeast-1.amazonaws.com"
     ]
 )
 
@@ -132,7 +132,7 @@ def register():
         # --- Insert new user ---
         cursor.execute("""
             INSERT INTO Users (username, passwordHash, sessionKey, createdAt, authorityLevel)
-            VALUES (%s, %s, '', NOW(), 1)
+            VALUES (%s, %s, '', NOW(), 50)
         """, (username, password_hash.decode('utf-8')))
 
         conn.commit()
@@ -550,7 +550,7 @@ def search_rooms():
 
 
 # Run the server (only if this file is executed directly)
-if __name__ == "__main__":
-    app.run(debug=True)
-    #port = int(os.environ.get("PORT", 8080))
-    #app.run(host="0.0.0.0", port=port)
+# if __name__ == "__main__":
+#     #app.run(debug=True)
+#     port = int(os.environ.get("PORT", 8080))
+#     app.run(host="0.0.0.0", port=port)

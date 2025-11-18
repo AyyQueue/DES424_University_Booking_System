@@ -10,7 +10,7 @@ export default function SignInButton({setSignInModalActive }) {
   const logOut = () => setUser(null);
 
   return (
-    <button className="btn" onClick={user ? logOut : openLoginPage}>
+    <button className="btn" id="signInOutBtn" onClick={user ? logOut : openLoginPage}>
       {user ? `${user.username} - Sign Out` : "Sign In"}
     </button>
   );

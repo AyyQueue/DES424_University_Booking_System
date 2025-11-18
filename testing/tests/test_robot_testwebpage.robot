@@ -39,14 +39,19 @@ Verify Booking In My Bookings
     Wait Until Keyword Succeeds    5x    2s    Element Should Not Be Visible    css=div[class="modal active"]
 
 Safe Sign Out
-    Run Keyword And Ignore Error    Click Button    css=#successModal .close-modal
-    Wait Until Element Is Not Visible    css=#successModal.active    5s
-    Run Keyword And Ignore Error    Click Button    css=#signInModal .close-modal
-    Wait Until Element Is Not Visible    css=#signInModal.active    5s
-    Run Keyword And Ignore Error    Click Button    css=#signUpModal .close-modal
-    Wait Until Element Is Not Visible    css=#signUpModal.active    5s
-    Click Element    xpath=//nav[@id='mainNav']//button[contains(text(),'Sign Out')]
-    Element Should Not Be Visible    css=.view-bookings-btn
+    Run Keyword And Ignore Error    Click Element    css=#successModal .close-modal
+    Run Keyword And Ignore Error    Click Element    css=#signInModal .close-modal
+    Run Keyword And Ignore Error    Click Element    css=#signUpModal .close-modal
+
+    # Scroll Sign Out into view and click it
+    ${sign_out}=    Get WebElement    xpath=//nav[@id='mainNav']//button[contains(text(),"Sign Out")]
+    Execute Javascript    arguments[0].scrollIntoView({block: "center", inline: "center"});    ${sign_out}
+    Wait Until Element Is Visible    xpath=//nav[@id='mainNav']//button[contains(text(),"Sign Out")]    15s
+    Click Element    xpath=//nav[@id='mainNav']//button[contains(text(),"Sign Out")]
+
+    # Wait for logged-out state: Sign In appears, View My Bookings disappears
+    Wait Until Element Is Visible       xpath=//nav[@id='mainNav']//button[normalize-space(text())='Sign In']    15s
+    Wait Until Element Is Not Visible   css=.view-bookings-btn    15s
 
 *** Test Cases ***
 Home Page Loads Correctly

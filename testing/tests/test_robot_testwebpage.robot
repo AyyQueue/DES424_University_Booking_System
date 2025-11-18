@@ -9,7 +9,7 @@ Open Browser To Homepage
     ${options}=    Evaluate    sys.modules['selenium.webdriver'].ChromeOptions()    sys, selenium.webdriver
     Call Method    ${options}    add_argument    --ignore-certificate-errors
     Call Method    ${options}    add_argument    --allow-insecure-localhost
-    Open Browser    ${BASE_URL}    ${BROWSER}    options=${options}    remote_url=${REMOTE_URL}
+    Open Browser    ${BASE_URL}    ${BROWSER}    options=${options}
     Maximize Browser Window
     Wait Until Element Is Visible    css=section.hero h1    20s
 

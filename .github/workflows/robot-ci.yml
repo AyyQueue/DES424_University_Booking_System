@@ -51,6 +51,7 @@ jobs:
             -v USERNAME:${USERNAME} \
             -v PASSWORD:${PASSWORD} \
             -v REMOTE_URL:${REMOTE_URL} \
+            testing \
             tests
 
       - name: Convert Robot output to xUnit for test reporting

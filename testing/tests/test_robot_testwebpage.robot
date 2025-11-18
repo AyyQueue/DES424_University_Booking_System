@@ -45,12 +45,12 @@ Safe Sign Out
     Run Keyword And Ignore Error    Click Button    css=#signUpModal .close-modal
 
     # Scroll Sign Out button into view
-    ${sign_out}=    Get WebElement    xpath=//nav[@id='mainNav']//button[contains(text(),'Sign Out')]
+    ${sign_out}=    Get WebElement    xpath=//nav[@id='mainNav']//button[contains(text(),"Sign Out")]
     Execute JavaScript    arguments[0].scrollIntoView({block: "center", inline: "center"});    ${sign_out}
 
     # Wait until clickable and click
-    Wait Until Element Is Visible    xpath=//nav[@id='mainNav']//button[contains(text(),'Sign Out')]    15s
-    Click Element    xpath=//nav[@id='mainNav']//button[contains(text(),'Sign Out')]
+    Wait Until Element Is Visible    xpath=//nav[@id='mainNav']//button[contains(text(),"Sign Out")]    15s
+    Click Element    xpath=//nav[@id='mainNav']//button[contains(text(),"Sign Out")]
 
     # Wait for page to update: Sign In button appears, View My Bookings disappears
     Wait Until Element Is Visible    xpath=//nav[@id='mainNav']//button[normalize-space(text())='Sign In']    15s

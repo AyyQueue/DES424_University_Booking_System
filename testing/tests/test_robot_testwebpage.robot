@@ -46,7 +46,7 @@ Safe Sign Out
     # Scroll Sign Out into view and click it
     # Scroll to the top of the page
     Execute Javascript    window.scrollTo(0, 0);
-    Click Element    css=#mainNav ul li:last-of-type > button
+    Click Element    xpath=(//nav[@id='mainNav']//ul/li/button)[last()]
     Wait Until Element Is Visible     css=#mainNav button[contains(text(),'Sign In')]    15s
 
 *** Test Cases ***

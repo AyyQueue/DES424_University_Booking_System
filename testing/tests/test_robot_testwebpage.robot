@@ -39,13 +39,21 @@ Verify Booking In My Bookings
     Wait Until Keyword Succeeds    5x    2s    Element Should Not Be Visible    css=div[class="modal active"]
 
 Safe Sign Out
+    # Close any potential modals that may block the header
     Run Keyword And Ignore Error    Click Button    css=#successModal .close-modal
-    Wait Until Element Is Not Visible    css=#successModal.active    5s
     Run Keyword And Ignore Error    Click Button    css=#signInModal .close-modal
-    Wait Until Element Is Not Visible    css=#signInModal.active    5s
     Run Keyword And Ignore Error    Click Button    css=#signUpModal .close-modal
-    Wait Until Element Is Not Visible    css=#signUpModal.active    5s
+
+    # Scroll Sign Out button into view
+    ${sign_out}=    Get WebElement    xpath=//nav[@id='mainNav']//button[contains(text(),'Sign Out')]
+    Execute JavaScript    arguments[0].scrollIntoView({block: "center", inline: "center"});    ${sign_out}
+
+    # Wait until clickable and click
+    Wait Until Element Is Visible    xpath=//nav[@id='mainNav']//button[contains(text(),'Sign Out')]    15s
     Click Element    xpath=//nav[@id='mainNav']//button[contains(text(),'Sign Out')]
+
+    # Wait for page to update: Sign In button appears, View My Bookings disappears
+    Wait Until Element Is Visible    xpath=//nav[@id='mainNav']//button[normalize-space(text())='Sign In']    15s
     Element Should Not Be Visible    css=.view-bookings-btn
 
 *** Test Cases ***

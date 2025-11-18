@@ -45,14 +45,14 @@ jobs:
           REMOTE_URL: http://localhost:4444/wd/hub
         run: |
           mkdir -p results
-          robot \
-            --outputdir results \
+          # Run the Robot test at its correct path
+          robot --outputdir results \
             -v BASE_URL:${BASE_URL} \
             -v USERNAME:${USERNAME} \
             -v PASSWORD:${PASSWORD} \
             -v REMOTE_URL:${REMOTE_URL} \
-            testing \
-            tests
+            src/testing/tests/test_robot_testwebpage.robot
+
 
       - name: Convert Robot output to xUnit for test reporting
         run: |

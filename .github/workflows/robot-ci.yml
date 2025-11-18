@@ -43,7 +43,6 @@ jobs:
           USERNAME: ${{ secrets.TEST_USERNAME }}
           PASSWORD: ${{ secrets.TEST_PASSWORD }}
           BROWSER: ${{ secrets.BROWSER }}
-          REMOTE_URL: http://localhost:4444/wd/hub
         run: |
           mkdir -p results
           # Run the Robot test at its correct path
@@ -52,7 +51,6 @@ jobs:
             -v USERNAME:${USERNAME} \
             -v PASSWORD:${PASSWORD} \
             -v BROWSER:${BROWSER} \
-            -v REMOTE_URL:${REMOTE_URL} \
             testing/tests/test_robot_testwebpage.robot
 
 

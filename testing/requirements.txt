@@ -1,4 +1,0 @@
-robotframework==6.0.3
-robotframework-seleniumlibrary==6.1.0
-selenium==4.11.2
-robotframework-junitxml==1.0.3

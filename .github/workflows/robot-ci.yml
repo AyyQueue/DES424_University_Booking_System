@@ -45,7 +45,6 @@ jobs:
           BROWSER: ${{ secrets.BROWSER }}
         run: |
           mkdir -p results
-          # Run the Robot test at its correct path
           robot --outputdir results \
             -v BASE_URL:${BASE_URL} \
             -v USERNAME:${USERNAME} \

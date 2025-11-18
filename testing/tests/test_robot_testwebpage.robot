@@ -47,7 +47,7 @@ Safe Sign Out
     Wait Until Element Is Not Visible    css=#signInModal.active    5s
     Run Keyword And Ignore Error    Click Button    css=#signUpModal .close-modal
     Wait Until Element Is Not Visible    css=#signUpModal.active    5s
-    Click Element    xpath=//nav[@id='mainNav']//button[contains(text(),'Sign Out')]
+    Click Element    xpath=//nav[@id='mainNav']//ul/li[last()]/button
     Wait Until Element Is Visible    xpath=//nav[@id='mainNav']//button[contains(text(),'Sign In')]    15s
     Wait Until Element Is Visible    xpath=//nav[@id='mainNav']//button[contains(text(),'Sign Up')]    15s
 

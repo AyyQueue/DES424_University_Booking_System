@@ -1,0 +1,5 @@
+BASE_URL: http://uni-room-booking-des-website.s3-website-ap-southeast-1.amazonaws.com/
+USERNAME: testuser123
+PASSWORD: testpass123
+BROWSER: Chrome
+REMOTE_URL: http://localhost:4444/wd/hub   # optional override for remote Selenium

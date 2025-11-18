@@ -42,6 +42,7 @@ jobs:
           BASE_URL: ${{ secrets.STAGING_URL }}
           USERNAME: ${{ secrets.TEST_USERNAME }}
           PASSWORD: ${{ secrets.TEST_PASSWORD }}
+          BROWSER: ${{ secrets.BROWSER }}
           REMOTE_URL: http://localhost:4444/wd/hub
         run: |
           mkdir -p results

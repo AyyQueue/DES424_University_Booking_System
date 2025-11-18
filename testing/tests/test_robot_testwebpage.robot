@@ -38,16 +38,16 @@ Verify Booking In My Bookings
     Execute Javascript    document.querySelector('div[class="modal active"] .close-modal').click();
     Wait Until Keyword Succeeds    5x    2s    Element Should Not Be Visible    css=div[class="modal active"]
 
-
-
 Safe Sign Out
+    # Close any modals first to avoid interception
     Run Keyword And Ignore Error    Click Button    css=#successModal .close-modal
-    Wait Until Element Is Not Visible    css=#successModal.active    5s
     Run Keyword And Ignore Error    Click Button    css=#signInModal .close-modal
-    Wait Until Element Is Not Visible    css=#signInModal.active    5s
     Run Keyword And Ignore Error    Click Button    css=#signUpModal .close-modal
-    Wait Until Element Is Not Visible    css=#signUpModal.active    5s
-    Click Element    xpath=//nav[@id='mainNav']//ul/li[last()]/button
+    # Click Sign Out
+    Click Element    xpath=//nav[@id='mainNav']//ul/li/button[contains(text(),'Sign Out')]
+    # Small pause to allow React to re-render
+    Sleep    1s
+    # Wait for Sign In and Sign Up to be visible
     Wait Until Element Is Visible    xpath=//nav[@id='mainNav']//button[normalize-space(text())='Sign In']    15s
     Wait Until Element Is Visible    xpath=//nav[@id='mainNav']//button[normalize-space(text())='Sign Up']    15s
 

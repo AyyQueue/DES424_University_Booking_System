@@ -62,12 +62,3 @@ jobs:
         with:
           name: robot-results
           path: results
-
-      - name: Publish JUnit-style report to GitHub Checks (optional)
-        uses: dorny/test-reporter@v1
-        if: always()
-        with:
-          name: Robot Tests
-          path: results/xunit.xml
-          reporter: junit
-          fail-on-error: false

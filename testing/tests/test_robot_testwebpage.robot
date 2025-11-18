@@ -2,6 +2,7 @@
 Library           SeleniumLibrary
 Suite Setup       Open Browser To Homepage
 Suite Teardown    Close Browser
+Test Teardown     Run Keyword If Test Failed    Capture Page Screenshot
 
 *** Keywords ***
 Open Browser To Homepage

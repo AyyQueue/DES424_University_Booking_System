@@ -1,0 +1,63 @@
+name: Robot Framework E2E
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  robot-e2e:
+    runs-on: ubuntu-latest
+
+    services:
+      selenium:
+        image: selenium/standalone-chrome:115.0
+        ports:
+          - 4444:4444
+        options: >-
+          --health-cmd="curl -sS http://localhost:4444/wd/hub/status | jq -r .value.ready"
+          --health-interval=5s --health-timeout=10s --health-retries=10
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Robot tests
+        env:
+          BASE_URL: ${{ secrets.STAGING_URL }}
+          USERNAME: ${{ secrets.TEST_USERNAME }}
+          PASSWORD: ${{ secrets.TEST_PASSWORD }}
+          REMOTE_URL: http://localhost:4444/wd/hub
+        run: |
+          mkdir -p results
+          robot --outputdir results -v BASE_URL:${BASE_URL} -v USERNAME:${USERNAME} -v PASSWORD:${PASSWORD} -v REMOTE_URL:${REMOTE_URL} tests/your_test.robot
+
+      - name: Convert Robot output to xUnit for test reporting
+        run: |
+          rebot --xunit results/xunit.xml results/output.xml
+
+      - name: Upload Robot artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: robot-results
+          path: results
+
+      - name: Publish JUnit-style report to GitHub Checks (optional)
+        uses: dorny/test-reporter@v1
+        if: always()
+        with:
+          name: Robot Tests
+          path: results/xunit.xml
+          reporter: junit
+          fail-on-error: false

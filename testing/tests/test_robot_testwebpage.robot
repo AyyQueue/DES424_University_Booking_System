@@ -33,10 +33,11 @@ Verify Booking In My Bookings
     ${num_bookings}=    Get Length    ${booking_cards}
     Should Be True    ${num_bookings} >= 1
     # Close the modal so logout can work
-    Wait Until Element Is Visible    css=div[class="modal active"] .modal-content .modal-header .close-modal    10s
-    Scroll Element Into View         css=div[class="modal active"] .modal-content .modal-header .close-modal
-    Click Button                     css=div[class="modal active"] .modal-content .modal-header .close-modal
-    Wait Until Element Is Not Visible    css=div[class="modal active"]    20s
+    # Ensure modal is in view
+    Scroll Element Into View    css=div[class="modal active"] .close-modal
+    Execute Javascript    document.querySelector('div[class="modal active"] .close-modal').click();
+    Wait Until Keyword Succeeds    5x    2s    Element Should Not Be Visible    css=div[class="modal active"]
+
 
 
 Safe Sign Out

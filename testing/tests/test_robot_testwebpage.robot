@@ -10,8 +10,6 @@ Open Browser To Homepage
     Call Method    ${options}    add_argument    --headless
     Call Method    ${options}    add_argument    --no-sandbox
     Call Method    ${options}    add_argument    --disable-dev-shm-usage
-    Call Method    ${options}    add_argument    --disable-gpu
-    Call Method    ${options}    add_argument    --window-size=1920,1080
     Call Method    ${options}    add_argument    --ignore-certificate-errors
     Call Method    ${options}    add_argument    --allow-insecure-localhost
     Open Browser    ${BASE_URL}    ${BROWSER}    options=${options}
@@ -34,9 +32,11 @@ Verify Booking In My Bookings
     ${num_bookings}=    Get Length    ${booking_cards}
     Should Be True    ${num_bookings} >= 1
     # Close the modal so logout can work
-    Scroll Element Into View    css=.modal.active .close-modal
-    Click Button    css=.modal.active .close-modal
+    Wait Until Element Is Visible    css=.modal.active .modal-header .close-modal    10s
+    Scroll Element Into View         css=.modal.active .modal-header .close-modal
+    Click Button                     css=.modal.active .modal-header .close-modal
     Wait Until Element Is Not Visible    css=.modal.active    20s
+
 
 Safe Sign Out
     Run Keyword And Ignore Error    Click Button    css=#successModal .close-modal

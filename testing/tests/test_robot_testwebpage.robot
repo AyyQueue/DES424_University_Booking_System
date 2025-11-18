@@ -27,16 +27,16 @@ Login User
 
 Verify Booking In My Bookings
     Click Element    css=.view-bookings-btn
-    Wait Until Element Is Visible    css=.modal.active .bookings-list .booking-item-card    15s
+    Wait Until Element Is Visible    css=div[class="modal active"] .bookings-list .booking-item-card    15s
 
-    ${booking_cards}=    Get WebElements    css=.modal.active .bookings-list .booking-item-card
+    ${booking_cards}=    Get WebElements    css=div[class="modal active"] .bookings-list .booking-item-card
     ${num_bookings}=    Get Length    ${booking_cards}
     Should Be True    ${num_bookings} >= 1
     # Close the modal so logout can work
-    Wait Until Element Is Visible    css=.modal.active .modal-header .close-modal    10s
-    Scroll Element Into View         css=.modal.active .modal-header .close-modal
-    Click Button                     css=.modal.active .modal-header .close-modal
-    Wait Until Element Is Not Visible    css=.modal.active    20s
+    Wait Until Element Is Visible    css=div[class="modal active"] .modal-content .modal-header .close-modal    10s
+    Scroll Element Into View         css=div[class="modal active"] .modal-content .modal-header .close-modal
+    Click Button                     css=div[class="modal active"] .modal-content .modal-header .close-modal
+    Wait Until Element Is Not Visible    css=div[class="modal active"]    20s
 
 
 Safe Sign Out

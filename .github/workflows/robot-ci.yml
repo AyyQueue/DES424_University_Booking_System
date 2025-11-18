@@ -51,6 +51,7 @@ jobs:
             -v BASE_URL:${BASE_URL} \
             -v USERNAME:${USERNAME} \
             -v PASSWORD:${PASSWORD} \
+            -v BROWSER:${BROWSER} \
             -v REMOTE_URL:${REMOTE_URL} \
             testing/tests/test_robot_testwebpage.robot
 

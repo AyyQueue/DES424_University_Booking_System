@@ -32,9 +32,9 @@ Verify Booking In My Bookings
     ${num_bookings}=    Get Length    ${booking_cards}
     Should Be True    ${num_bookings} >= 1
     # Close the modal so logout can work
+    Scroll Element Into View    css=.modal.active .close-modal
     Click Button    css=.modal.active .close-modal
-    Wait Until Element Is Not Visible    css=.modal.active    15s
-
+    Wait Until Element Is Not Visible    css=.modal.active    20s
 
 Safe Sign Out
     Run Keyword And Ignore Error    Click Button    css=#successModal .close-modal

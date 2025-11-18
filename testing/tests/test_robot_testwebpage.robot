@@ -39,17 +39,14 @@ Verify Booking In My Bookings
     Wait Until Keyword Succeeds    5x    2s    Element Should Not Be Visible    css=div[class="modal active"]
 
 Safe Sign Out
-    # Close any modals first to avoid interception
     Run Keyword And Ignore Error    Click Button    css=#successModal .close-modal
+    Wait Until Element Is Not Visible    css=#successModal.active    5s
     Run Keyword And Ignore Error    Click Button    css=#signInModal .close-modal
+    Wait Until Element Is Not Visible    css=#signInModal.active    5s
     Run Keyword And Ignore Error    Click Button    css=#signUpModal .close-modal
-    # Click Sign Out
-    Click Element    xpath=//nav[@id='mainNav']//ul/li/button[contains(text(),'Sign Out')]
-    # Small pause to allow React to re-render
-    Sleep    1s
-    # Wait for Sign In and Sign Up to be visible
-    Wait Until Element Is Visible    xpath=//nav[@id='mainNav']//button[normalize-space(text())='Sign In']    15s
-    Wait Until Element Is Visible    xpath=//nav[@id='mainNav']//button[normalize-space(text())='Sign Up']    15s
+    Wait Until Element Is Not Visible    css=#signUpModal.active    5s
+    Click Element    xpath=//nav[@id='mainNav']//button[contains(text(),'Sign Out')]
+    Element Should Not Be Visible    css=.view-bookings-btn
 
 *** Test Cases ***
 Home Page Loads Correctly

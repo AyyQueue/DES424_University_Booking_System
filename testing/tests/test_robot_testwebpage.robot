@@ -14,6 +14,7 @@ Open Browser To Homepage
     Call Method    ${options}    add_argument    --allow-insecure-localhost
     Open Browser    ${BASE_URL}    ${BROWSER}    options=${options}
     Maximize Browser Window
+    Set Window Size    1920    1080
     Wait Until Element Is Visible    css=section.hero h1    20s
 
 Login User
